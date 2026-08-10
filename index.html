@@ -34,7 +34,9 @@ body{
   margin-bottom:24px;
 }
 
-.logo span{color:#38bdf8}
+.logo span{
+  color:#38bdf8;
+}
 
 .card{
   background:#111b30;
@@ -128,13 +130,38 @@ button{
   margin-top:12px;
 }
 
-.hidden{display:none}
+.hidden{
+  display:none;
+}
 
 .error{
   color:#fb7185;
   font-size:13px;
   margin-top:10px;
   word-break:break-word;
+}
+
+.rank{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid #24304a;
+}
+
+.rank:last-child{
+  border-bottom:0;
+}
+
+.rank-name{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  max-width:65%;
+}
+
+.rank-points{
+  color:#38bdf8;
+  font-weight:bold;
 }
 </style>
 </head>
@@ -143,178 +170,191 @@ button{
 
 <div class="app">
 
-<div class="logo">
-⚡ CRYPTO<span>TAP</span>
-</div>
-
-
-<!-- LOGIN -->
-
-<div id="loginScreen">
-
-  <div class="card">
-
-    <div class="label">
-      PLAYER
-    </div>
-
-    <input
-      id="username"
-      maxlength="30"
-      placeholder="Nhập username"
-    >
-
-    <button
-      class="main"
-      id="loginButton"
-    >
-      ENTER GAME
-    </button>
-
-    <div
-      id="error"
-      class="error"
-    ></div>
-
+  <div class="logo">
+    ⚡ CRYPTO<span>TAP</span>
   </div>
 
-</div>
 
+  <!-- LOGIN -->
 
-<!-- GAME -->
+  <div id="loginScreen">
 
-<div
-  id="gameScreen"
-  class="hidden"
+    <div class="card">
 
+      <div class="label">
+        PLAYER
+      </div>
 
-  <div class="card">
+      <input
+        id="username"
+        maxlength="30"
+        placeholder="Nhập username"
+      >
 
-    <div class="label">
-      YOUR POINTS
-    </div>
+      <button
+        class="main"
+        id="loginButton"
+      >
+        ENTER GAME
+      </button>
 
-    <div
-      id="points"
-      class="points"
-    >
-      0
+      <div
+        id="error"
+        class="error"
+      ></div>
+
     </div>
 
   </div>
 
 
-  <div class="stats">
+  <!-- GAME -->
 
-    <div class="stat">
+  <div
+    id="gameScreen"
+    class="hidden"
+  >
 
-      <div class="label">
-        TIME
-      </div>
-
-      <strong id="time">
-        15
-      </strong>
-
-    </div>
-
-
-    <div class="stat">
+    <div class="card">
 
       <div class="label">
-        TAPS
+        YOUR POINTS
       </div>
 
-      <strong id="round">
+      <div
+        id="points"
+        class="points"
+      >
         0
-      </strong>
+      </div>
+
+    </div>
+
+
+    <div class="stats">
+
+      <div class="stat">
+
+        <div class="label">
+          TIME
+        </div>
+
+        <strong id="time">
+          15
+        </strong>
+
+      </div>
+
+
+      <div class="stat">
+
+        <div class="label">
+          ROUND SCORE
+        </div>
+
+        <strong id="round">
+          0
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="tap-area"
+      id="tapArea"
+    >
+
+      <button
+        id="startButton"
+        class="main"
+        style="
+          position:absolute;
+          width:180px;
+          left:50%;
+          top:50%;
+          transform:translate(-50%,-50%);
+        "
+      >
+        START
+      </button>
+
+
+      <button
+        id="target"
+        class="target"
+      >
+        ⚡
+      </button>
+
+    </div>
+
+
+    <div
+      id="message"
+      class="info"
+    >
+      15 giây — tap mục tiêu để kiếm POINT
+    </div>
+
+
+    <!-- LEADERBOARD -->
+
+    <div class="card">
+
+      <div class="label">
+        🏆 TOP 10 PLAYERS
+      </div>
+
+      <div
+        id="leaderboard"
+        style="margin-top:10px"
+      >
+        Đang tải...
+      </div>
 
     </div>
 
   </div>
-
-
-  <div
-    class="tap-area"
-    id="tapArea"
-  >
-
-    <button
-      id="startButton"
-      class="main"
-      style="
-        position:absolute;
-        width:180px;
-        left:50%;
-        top:50%;
-        transform:translate(-50%,-50%);
-      "
-    >
-      START
-    </button>
-
-
-    <button
-      id="target"
-      class="target"
-    >
-      ⚡
-    </button>
-
-  </div>
-
-<div class="card" id="leaderboardCard">
-
-  <div class="label">
-    🏆 TOP 10 PLAYERS
-  </div>
-
-  <div id="leaderboard">
-    Đang tải...
-  </div>
-
-</div>
-  <div
-    id="message"
-    class="info"
-  >
-    15 giây — tap mục tiêu để kiếm POINT
-  </div>
-
-</div>
 
 </div>
 
 
 <script>
 
-/* =========================
+/* =====================================
    SUPABASE
-========================= */
+===================================== */
 
 const SUPABASE_URL =
 "https://qsbuwbdyajoxlsrruzzg.supabase.co";
+
 
 const SUPABASE_KEY =
 "sb_publishable_Z7BmFlVoVQu3wCjquLsOHQ_joQwJoaT";
 
 
-/* =========================
+/* =====================================
    STATE
-========================= */
+===================================== */
 
 let username = "";
+
 let totalPoints = 0;
 
 let playing = false;
+
 let taps = 0;
+
 let timeLeft = 15;
+
 let timer = null;
 
 
-/* =========================
+/* =====================================
    ELEMENTS
-========================= */
+===================================== */
 
 const loginScreen =
 document.getElementById("loginScreen");
@@ -351,94 +391,77 @@ document.getElementById("startButton");
 
 const message =
 document.getElementById("message");
+
 const leaderboard =
 document.getElementById("leaderboard");
 
-/* =========================
-   HEADERS
-========================= */
+
+/* =====================================
+   API HEADERS
+===================================== */
 
 function apiHeaders(extra = {}){
 
   return {
-    "apikey": SUPABASE_KEY,
+
+    "apikey":
+      SUPABASE_KEY,
+
     "Authorization":
       "Bearer " + SUPABASE_KEY,
+
     ...extra
+
   };
 
 }
 
 
-/* =========================
-   LOGIN
-========================= */
+/* =====================================
+   LEADERBOARD
+===================================== */
 
-loginButton.onclick = login;
-
-async function login(){
-
-  const name =
-    usernameInput.value.trim();
-
-  errorBox.textContent = "";
-
-  if(!name){
-
-    errorBox.textContent =
-      "Nhập username trước.";
-
-    return;
-  }
-
-  loginButton.disabled = true;
-
-  loginButton.textContent =
-    "CONNECTING...";
-
-
-  try{
-
-    const response =
-      await fetch(
-        SUPABASE_URL +
-        "/rest/v1/players" +
-        "?username=eq." +
-        encodeURIComponent(name) +
-        "&select=id,username,points",
-        {
-          headers:
-            apiHeaders()
-        }
-      );
 async function loadLeaderboard(){
 
+  leaderboard.innerHTML =
+    "Đang tải...";
+
+
   try{
 
     const response =
       await fetch(
+
         SUPABASE_URL +
         "/rest/v1/leaderboard" +
         "?select=username,points" +
         "&limit=10",
+
         {
+          method:"GET",
+
           headers:
             apiHeaders()
         }
+
       );
+
 
     if(!response.ok){
 
-      throw new Error(
-        await response.text()
-      );
+      const error =
+        await response.text();
+
+      throw new Error(error);
 
     }
 
-    const data =
+
+    const players =
       await response.json();
 
-    if(data.length === 0){
+
+    if(players.length === 0){
 
       leaderboard.innerHTML =
         "Chưa có người chơi.";
@@ -447,38 +470,122 @@ async function loadLeaderboard(){
 
     }
 
-    leaderboard.innerHTML =
-      data.map(
-        (player,index) => `
-          <div style="
-            display:flex;
-            justify-content:space-between;
-            padding:9px 0;
-            border-bottom:1px solid #24304a;
-          ">
-            <span>
-              ${index + 1}. ${player.username}
-            </span>
 
-            <strong>
-              ${Number(player.points || 0).toLocaleString()}
-            </strong>
-          </div>
-        `
+    leaderboard.innerHTML =
+      players.map(
+        (player,index) => {
+
+          const name =
+            String(
+              player.username || ""
+            )
+            .replace(
+              /[&<>"']/g,
+              ""
+            );
+
+
+          const points =
+            Number(
+              player.points || 0
+            );
+
+
+          return `
+            <div class="rank">
+
+              <span class="rank-name">
+                ${index + 1}. ${name}
+              </span>
+
+              <span class="rank-points">
+                ${points.toLocaleString()}
+              </span>
+
+            </div>
+          `;
+
+        }
       ).join("");
+
 
   }
 
   catch(error){
 
-    console.error(error);
+    console.error(
+      "LEADERBOARD ERROR:",
+      error
+    );
 
-    leaderboard.textContent =
+
+    leaderboard.innerHTML =
       "Không tải được TOP.";
 
   }
 
 }
+
+
+/* =====================================
+   LOGIN
+===================================== */
+
+loginButton.onclick =
+login;
+
+
+async function login(){
+
+  const name =
+    usernameInput.value.trim();
+
+
+  errorBox.textContent =
+    "";
+
+
+  if(!name){
+
+    errorBox.textContent =
+      "Nhập username trước.";
+
+    return;
+
+  }
+
+
+  loginButton.disabled =
+    true;
+
+  loginButton.textContent =
+    "CONNECTING...";
+
+
+  try{
+
+    /*
+      Tìm player
+    */
+
+    const response =
+      await fetch(
+
+        SUPABASE_URL +
+        "/rest/v1/players" +
+        "?username=eq." +
+        encodeURIComponent(name) +
+        "&select=id,username,points",
+
+        {
+          method:"GET",
+
+          headers:
+            apiHeaders()
+        }
+
+      );
+
 
     if(!response.ok){
 
@@ -493,7 +600,9 @@ async function loadLeaderboard(){
       await response.json();
 
 
-    /* PLAYER CŨ */
+    /*
+      Player cũ
+    */
 
     if(players.length > 0){
 
@@ -508,32 +617,44 @@ async function loadLeaderboard(){
     }
 
 
-    /* PLAYER MỚI */
+    /*
+      Player mới
+    */
 
     else{
 
       const create =
         await fetch(
+
           SUPABASE_URL +
           "/rest/v1/players",
+
           {
+
             method:"POST",
 
             headers:
               apiHeaders({
+
                 "Content-Type":
                   "application/json",
 
                 "Prefer":
                   "return=representation"
+
               }),
 
             body:
               JSON.stringify({
+
                 username:name,
+
                 points:0
+
               })
+
           }
+
         );
 
 
@@ -566,6 +687,7 @@ async function loadLeaderboard(){
       "hidden"
     );
 
+
     gameScreen.classList.remove(
       "hidden"
     );
@@ -573,13 +695,21 @@ async function loadLeaderboard(){
 
     message.textContent =
       "Database connected ✅";
-loadLeaderboard();
+
+
+    /*
+      Tải TOP
+    */
+
+    await loadLeaderboard();
+
 
   }
 
   catch(error){
 
     console.error(error);
+
 
     errorBox.textContent =
       "Database error: " +
@@ -590,7 +720,8 @@ loadLeaderboard();
 
   finally{
 
-    loginButton.disabled = false;
+    loginButton.disabled =
+      false;
 
     loginButton.textContent =
       "ENTER GAME";
@@ -600,32 +731,42 @@ loadLeaderboard();
 }
 
 
-/* =========================
-   TARGET POSITION
-========================= */
+/* =====================================
+   MOVE TARGET
+===================================== */
 
 function moveTarget(){
 
   const size = 75;
 
+
   const maxX =
-    tapArea.clientWidth - size;
+    tapArea.clientWidth -
+    size;
+
 
   const maxY =
-    tapArea.clientHeight - size;
+    tapArea.clientHeight -
+    size;
+
 
   target.style.left =
-    Math.random() * maxX + "px";
+    Math.random() *
+    maxX +
+    "px";
+
 
   target.style.top =
-    Math.random() * maxY + "px";
+    Math.random() *
+    maxY +
+    "px";
 
 }
 
 
-/* =========================
+/* =====================================
    START ROUND
-========================= */
+===================================== */
 
 startButton.onclick =
 startRound;
@@ -633,7 +774,9 @@ startRound;
 
 function startRound(){
 
-  if(playing) return;
+  if(playing)
+    return;
+
 
   playing = true;
 
@@ -645,12 +788,14 @@ function startRound(){
   roundElement.textContent =
     "0";
 
+
   timeElement.textContent =
     "15";
 
 
   startButton.style.display =
     "none";
+
 
   target.style.display =
     "block";
@@ -689,34 +834,41 @@ function startRound(){
 }
 
 
-/* =========================
+/* =====================================
    TAP
-========================= */
+===================================== */
 
-target.onclick = () => {
+target.onclick =
+function(){
 
-  if(!playing) return;
+  if(!playing)
+    return;
+
 
   taps++;
 
+
   roundElement.textContent =
     taps;
+
 
   moveTarget();
 
 };
 
 
-/* =========================
-   FINISH ROUND
-========================= */
+/* =====================================
+   END ROUND
+===================================== */
 
 async function endRound(){
 
-  if(!playing) return;
+  if(!playing)
+    return;
 
 
   playing = false;
+
 
   clearInterval(timer);
 
@@ -724,8 +876,10 @@ async function endRound(){
   target.style.display =
     "none";
 
+
   startButton.style.display =
     "block";
+
 
   startButton.textContent =
     "PLAY AGAIN";
@@ -738,23 +892,26 @@ async function endRound(){
   try{
 
     /*
-      Chỉ gửi USERNAME + TAPS.
-
-      Server tự tính:
-      reward = taps × 10
+      Chỉ gửi username + taps.
+      Server tự tính reward.
     */
 
     const response =
       await fetch(
+
         SUPABASE_URL +
         "/rest/v1/rpc/finish_game_round",
+
         {
+
           method:"POST",
 
           headers:
             apiHeaders({
+
               "Content-Type":
                 "application/json"
+
             }),
 
           body:
@@ -767,7 +924,9 @@ async function endRound(){
                 taps
 
             })
+
         }
+
       );
 
 
@@ -786,24 +945,37 @@ async function endRound(){
       );
 
 
-    totalPoints += reward;
+    totalPoints +=
+      reward;
 
 
     pointsElement.textContent =
       totalPoints.toLocaleString();
 
 
+    roundElement.textContent =
+      reward;
+
+
     message.textContent =
       "+" +
       reward +
       " POINT ✅";
-loadLeaderboard();
+
+
+    /*
+      Cập nhật TOP
+    */
+
+    await loadLeaderboard();
+
 
   }
 
   catch(error){
 
     console.error(error);
+
 
     message.textContent =
       "Round lỗi: " +
