@@ -263,7 +263,17 @@ button{
 
   </div>
 
+<div class="card" id="leaderboardCard">
 
+  <div class="label">
+    🏆 TOP 10 PLAYERS
+  </div>
+
+  <div id="leaderboard">
+    Đang tải...
+  </div>
+
+</div>
   <div
     id="message"
     class="info"
@@ -341,7 +351,8 @@ document.getElementById("startButton");
 
 const message =
 document.getElementById("message");
-
+const leaderboard =
+document.getElementById("leaderboard");
 
 /* =========================
    HEADERS
@@ -400,7 +411,74 @@ async function login(){
             apiHeaders()
         }
       );
+async function loadLeaderboard(){
 
+  try{
+
+    const response =
+      await fetch(
+        SUPABASE_URL +
+        "/rest/v1/leaderboard" +
+        "?select=username,points" +
+        "&limit=10",
+        {
+          headers:
+            apiHeaders()
+        }
+      );
+
+    if(!response.ok){
+
+      throw new Error(
+        await response.text()
+      );
+
+    }
+
+    const data =
+      await response.json();
+
+    if(data.length === 0){
+
+      leaderboard.innerHTML =
+        "Chưa có người chơi.";
+
+      return;
+
+    }
+
+    leaderboard.innerHTML =
+      data.map(
+        (player,index) => `
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            padding:9px 0;
+            border-bottom:1px solid #24304a;
+          ">
+            <span>
+              ${index + 1}. ${player.username}
+            </span>
+
+            <strong>
+              ${Number(player.points || 0).toLocaleString()}
+            </strong>
+          </div>
+        `
+      ).join("");
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    leaderboard.textContent =
+      "Không tải được TOP.";
+
+  }
+
+}
 
     if(!response.ok){
 
@@ -495,7 +573,7 @@ async function login(){
 
     message.textContent =
       "Database connected ✅";
-
+loadLeaderboard();
 
   }
 
@@ -719,7 +797,7 @@ async function endRound(){
       "+" +
       reward +
       " POINT ✅";
-
+loadLeaderboard();
 
   }
 
