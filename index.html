@@ -147,11 +147,16 @@ button{
 ⚡ CRYPTO<span>TAP</span>
 </div>
 
+
+<!-- LOGIN -->
+
 <div id="loginScreen">
 
   <div class="card">
 
-    <div class="label">PLAYER</div>
+    <div class="label">
+      PLAYER
+    </div>
 
     <input
       id="username"
@@ -166,20 +171,33 @@ button{
       ENTER GAME
     </button>
 
-    <div id="error" class="error"></div>
+    <div
+      id="error"
+      class="error"
+    ></div>
 
   </div>
 
 </div>
 
 
-<div id="gameScreen" class="hidden">
+<!-- GAME -->
+
+<div
+  id="gameScreen"
+  class="hidden"
+
 
   <div class="card">
 
-    <div class="label">YOUR POINTS</div>
+    <div class="label">
+      YOUR POINTS
+    </div>
 
-    <div id="points" class="points">
+    <div
+      id="points"
+      class="points"
+    >
       0
     </div>
 
@@ -189,19 +207,37 @@ button{
   <div class="stats">
 
     <div class="stat">
-      <div class="label">TIME</div>
-      <strong id="time">15</strong>
+
+      <div class="label">
+        TIME
+      </div>
+
+      <strong id="time">
+        15
+      </strong>
+
     </div>
 
+
     <div class="stat">
-      <div class="label">ROUND</div>
-      <strong id="round">0</strong>
+
+      <div class="label">
+        TAPS
+      </div>
+
+      <strong id="round">
+        0
+      </strong>
+
     </div>
 
   </div>
 
 
-  <div class="tap-area" id="tapArea">
+  <div
+    class="tap-area"
+    id="tapArea"
+  >
 
     <button
       id="startButton"
@@ -217,6 +253,7 @@ button{
       START
     </button>
 
+
     <button
       id="target"
       class="target"
@@ -227,7 +264,10 @@ button{
   </div>
 
 
-  <div id="message" class="info">
+  <div
+    id="message"
+    class="info"
+  >
     15 giây — tap mục tiêu để kiếm POINT
   </div>
 
@@ -250,14 +290,14 @@ const SUPABASE_KEY =
 
 
 /* =========================
-   GAME STATE
+   STATE
 ========================= */
 
 let username = "";
 let totalPoints = 0;
 
 let playing = false;
-let roundPoints = 0;
+let taps = 0;
 let timeLeft = 15;
 let timer = null;
 
@@ -341,12 +381,12 @@ async function login(){
   }
 
   loginButton.disabled = true;
+
   loginButton.textContent =
     "CONNECTING...";
 
-  try{
 
-    /* Tìm player */
+  try{
 
     const response =
       await fetch(
@@ -356,8 +396,8 @@ async function login(){
         encodeURIComponent(name) +
         "&select=id,username,points",
         {
-          method:"GET",
-          headers:apiHeaders()
+          headers:
+            apiHeaders()
         }
       );
 
@@ -375,7 +415,7 @@ async function login(){
       await response.json();
 
 
-    /* Player cũ */
+    /* PLAYER CŨ */
 
     if(players.length > 0){
 
@@ -383,12 +423,14 @@ async function login(){
         players[0].username;
 
       totalPoints =
-        Number(players[0].points || 0);
+        Number(
+          players[0].points || 0
+        );
 
     }
 
 
-    /* Player mới */
+    /* PLAYER MỚI */
 
     else{
 
@@ -399,18 +441,20 @@ async function login(){
           {
             method:"POST",
 
-            headers:apiHeaders({
-              "Content-Type":
-                "application/json",
+            headers:
+              apiHeaders({
+                "Content-Type":
+                  "application/json",
 
-              "Prefer":
-                "return=representation"
-            }),
+                "Prefer":
+                  "return=representation"
+              }),
 
-            body:JSON.stringify({
-              username:name,
-              points:0
-            })
+            body:
+              JSON.stringify({
+                username:name,
+                points:0
+              })
           }
         );
 
@@ -431,8 +475,7 @@ async function login(){
       username =
         created[0].username;
 
-      totalPoints =
-        Number(created[0].points || 0);
+      totalPoints = 0;
 
     }
 
@@ -440,9 +483,15 @@ async function login(){
     pointsElement.textContent =
       totalPoints.toLocaleString();
 
-    loginScreen.classList.add("hidden");
 
-    gameScreen.classList.remove("hidden");
+    loginScreen.classList.add(
+      "hidden"
+    );
+
+    gameScreen.classList.remove(
+      "hidden"
+    );
+
 
     message.textContent =
       "Database connected ✅";
@@ -460,6 +509,7 @@ async function login(){
 
   }
 
+
   finally{
 
     loginButton.disabled = false;
@@ -473,7 +523,7 @@ async function login(){
 
 
 /* =========================
-   TARGET
+   TARGET POSITION
 ========================= */
 
 function moveTarget(){
@@ -486,27 +536,22 @@ function moveTarget(){
   const maxY =
     tapArea.clientHeight - size;
 
-  const x =
-    Math.random() * maxX;
-
-  const y =
-    Math.random() * maxY;
-
   target.style.left =
-    x + "px";
+    Math.random() * maxX + "px";
 
   target.style.top =
-    y + "px";
+    Math.random() * maxY + "px";
 
 }
 
 
 /* =========================
-   START
+   START ROUND
 ========================= */
 
 startButton.onclick =
 startRound;
+
 
 function startRound(){
 
@@ -514,39 +559,54 @@ function startRound(){
 
   playing = true;
 
-  roundPoints = 0;
+  taps = 0;
 
   timeLeft = 15;
 
-  roundElement.textContent = "0";
 
-  timeElement.textContent = "15";
+  roundElement.textContent =
+    "0";
 
-  startButton.style.display = "none";
+  timeElement.textContent =
+    "15";
 
-  target.style.display = "block";
+
+  startButton.style.display =
+    "none";
+
+  target.style.display =
+    "block";
+
 
   message.textContent =
     "⚡ TAP!";
+
 
   moveTarget();
 
 
   timer =
-    setInterval(() => {
+    setInterval(
 
-      timeLeft--;
+      () => {
 
-      timeElement.textContent =
-        timeLeft;
+        timeLeft--;
 
-      if(timeLeft <= 0){
+        timeElement.textContent =
+          timeLeft;
 
-        endRound();
 
-      }
+        if(timeLeft <= 0){
 
-    },1000);
+          endRound();
+
+        }
+
+      },
+
+      1000
+
+    );
 
 }
 
@@ -559,10 +619,10 @@ target.onclick = () => {
 
   if(!playing) return;
 
-  roundPoints += 10;
+  taps++;
 
   roundElement.textContent =
-    roundPoints;
+    taps;
 
   moveTarget();
 
@@ -570,73 +630,96 @@ target.onclick = () => {
 
 
 /* =========================
-   END ROUND
+   FINISH ROUND
 ========================= */
 
 async function endRound(){
 
   if(!playing) return;
 
+
   playing = false;
 
   clearInterval(timer);
 
-  target.style.display = "none";
 
-  startButton.style.display = "block";
+  target.style.display =
+    "none";
+
+  startButton.style.display =
+    "block";
 
   startButton.textContent =
     "PLAY AGAIN";
 
 
-  totalPoints += roundPoints;
-
-  pointsElement.textContent =
-    totalPoints.toLocaleString();
-
   message.textContent =
-    "Đang lưu POINT...";
+    "Đang xác nhận round...";
 
 
   try{
 
-    const update =
+    /*
+      Chỉ gửi USERNAME + TAPS.
+
+      Server tự tính:
+      reward = taps × 10
+    */
+
+    const response =
       await fetch(
         SUPABASE_URL +
-        "/rest/v1/players" +
-        "?username=eq." +
-        encodeURIComponent(username),
+        "/rest/v1/rpc/finish_game_round",
         {
-          method:"PATCH",
+          method:"POST",
 
-          headers:apiHeaders({
-            "Content-Type":
-              "application/json",
+          headers:
+            apiHeaders({
+              "Content-Type":
+                "application/json"
+            }),
 
-            "Prefer":
-              "return=minimal"
-          }),
+          body:
+            JSON.stringify({
 
-          body:JSON.stringify({
-            points:totalPoints
-          })
+              p_username:
+                username,
+
+              p_taps:
+                taps
+
+            })
         }
       );
 
 
-    if(!update.ok){
+    if(!response.ok){
 
       throw new Error(
-        await update.text()
+        await response.text()
       );
 
     }
 
 
+    const reward =
+      Number(
+        await response.json()
+      );
+
+
+    totalPoints += reward;
+
+
+    pointsElement.textContent =
+      totalPoints.toLocaleString();
+
+
     message.textContent =
       "+" +
-      roundPoints +
-      " POINT đã lưu ✅";
+      reward +
+      " POINT ✅";
+
 
   }
 
@@ -645,7 +728,7 @@ async function endRound(){
     console.error(error);
 
     message.textContent =
-      "Lưu POINT lỗi: " +
+      "Round lỗi: " +
       error.message;
 
   }
