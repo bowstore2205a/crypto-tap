@@ -1,1 +1,301 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Tap</title>
 
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+    min-height:100vh;
+    background:radial-gradient(circle at top,#172554,#090d1a 50%,#05070d);
+    color:white;
+    font-family:Arial,sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.game{
+    width:min(430px,94vw);
+    min-height:700px;
+    background:#0c1223;
+    border:1px solid #26324d;
+    border-radius:24px;
+    padding:20px;
+    box-shadow:0 20px 70px rgba(0,0,0,.5);
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:25px;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:800;
+}
+
+.logo span{color:#38bdf8}
+
+.status{
+    font-size:12px;
+    color:#94a3b8;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.card{
+    background:#131c31;
+    border-radius:15px;
+    padding:15px;
+}
+
+.label{
+    color:#94a3b8;
+    font-size:12px;
+    margin-bottom:7px;
+}
+
+.value{
+    font-size:23px;
+    font-weight:800;
+}
+
+#score{color:#38bdf8}
+#timer{color:#facc15}
+
+.arena{
+    position:relative;
+    height:390px;
+    margin-top:18px;
+    overflow:hidden;
+    border-radius:20px;
+    background:
+      linear-gradient(#ffffff06 1px,transparent 1px),
+      linear-gradient(90deg,#ffffff06 1px,transparent 1px);
+    background-size:30px 30px;
+    border:1px solid #26324d;
+}
+
+.target{
+    position:absolute;
+    width:72px;
+    height:72px;
+    border:0;
+    border-radius:50%;
+    background:linear-gradient(135deg,#38bdf8,#6366f1);
+    color:white;
+    font-size:30px;
+    cursor:pointer;
+    box-shadow:0 0 25px #38bdf88c;
+}
+
+.start{
+    position:absolute;
+    inset:0;
+    margin:auto;
+    width:180px;
+    height:58px;
+    border:0;
+    border-radius:15px;
+    background:#38bdf8;
+    color:#06111d;
+    font-weight:800;
+    font-size:17px;
+    cursor:pointer;
+}
+
+.message{
+    text-align:center;
+    margin-top:15px;
+    color:#94a3b8;
+    font-size:13px;
+}
+
+.result{
+    display:none;
+    text-align:center;
+    margin-top:15px;
+}
+
+.result strong{
+    color:#38bdf8;
+    font-size:28px;
+}
+
+.bottom{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-top:18px;
+}
+
+.bottom div{
+    text-align:center;
+    padding:11px 5px;
+    border-radius:12px;
+    background:#131c31;
+    font-size:11px;
+    color:#94a3b8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+<div class="header">
+    <div class="logo">⚡ CRYPTO<span>TAP</span></div>
+    <div class="status">MVP v0.1</div>
+</div>
+
+<div class="stats">
+
+<div class="card">
+    <div class="label">POINTS</div>
+    <div class="value" id="score">0</div>
+</div>
+
+<div class="card">
+    <div class="label">TIME</div>
+    <div class="value" id="timer">15</div>
+</div>
+
+</div>
+
+<div class="arena" id="arena">
+
+<button class="start" id="startBtn">
+    ⚡ START GAME
+</button>
+
+<button class="target" id="target" style="display:none;">
+    ⚡
+</button>
+
+</div>
+
+<div class="message" id="message">
+    Bấm START để bắt đầu
+</div>
+
+<div class="result" id="result">
+    <h2>🎉 ROUND COMPLETE</h2>
+    <p>Bạn kiếm được</p>
+    <strong id="finalScore">0 POINT</strong>
+</div>
+
+<div class="bottom">
+    <div>🎁 DAILY<br>COMING</div>
+    <div>🏆 RANK<br>COMING</div>
+    <div>💸 WALLET<br>COMING</div>
+</div>
+
+</div>
+
+<script>
+
+const arena=document.getElementById("arena");
+const target=document.getElementById("target");
+const startBtn=document.getElementById("startBtn");
+
+const scoreElement=document.getElementById("score");
+const timerElement=document.getElementById("timer");
+const message=document.getElementById("message");
+
+const result=document.getElementById("result");
+const finalScore=document.getElementById("finalScore");
+
+let score=0;
+let timeLeft=15;
+let playing=false;
+let timer=null;
+
+function moveTarget(){
+
+    const size=72;
+
+    const x=Math.random()*(arena.clientWidth-size);
+    const y=Math.random()*(arena.clientHeight-size);
+
+    target.style.left=x+"px";
+    target.style.top=y+"px";
+}
+
+function startGame(){
+
+    if(playing)return;
+
+    playing=true;
+    score=0;
+    timeLeft=15;
+
+    scoreElement.textContent=score;
+    timerElement.textContent=timeLeft;
+
+    startBtn.style.display="none";
+    target.style.display="block";
+    result.style.display="none";
+
+    message.textContent="⚡ TAP CÀNG NHANH CÀNG TỐT!";
+
+    moveTarget();
+
+    timer=setInterval(()=>{
+
+        timeLeft--;
+
+        timerElement.textContent=timeLeft;
+
+        if(timeLeft<=0){
+            endGame();
+        }
+
+    },1000);
+}
+
+function tapTarget(){
+
+    if(!playing)return;
+
+    score+=10;
+
+    scoreElement.textContent=score;
+
+    moveTarget();
+}
+
+function endGame(){
+
+    playing=false;
+
+    clearInterval(timer);
+
+    target.style.display="none";
+    startBtn.style.display="block";
+
+    startBtn.textContent="⚡ PLAY AGAIN";
+
+    finalScore.textContent=score+" POINT";
+
+    result.style.display="block";
+
+    message.textContent="Round kết thúc!";
+}
+
+startBtn.addEventListener("click",startGame);
+target.addEventListener("click",tapTarget);
+
+</script>
+
+</body>
+</html>
