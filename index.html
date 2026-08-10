@@ -520,63 +520,88 @@ totalPoints.toLocaleString();
 
 async function loadRoundsToday(){
 
-try{
+  try{
 
-const response =
-await fetch(
+    const now = new Date();
 
-SUPABASE_URL +
-"/rest/v1/game_rounds" +
-"?username=eq." +
-encodeURIComponent(username) +
-"&select=id",
+    const start = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      0,0,0,0
+    );
 
-{
-headers:apiHeaders()
+    const end = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+      0,0,0,0
+    );
+
+    const response = await fetch(
+      SUPABASE_URL +
+      "/rest/v1/game_rounds" +
+      "?username=eq." +
+      encodeURIComponent(username) +
+      "&created_at=gte." +
+      encodeURIComponent(start.toISOString()) +
+      "&created_at=lt." +
+      encodeURIComponent(end.toISOString()) +
+      "&select=id",
+      {
+        headers: apiHeaders()
+      }
+    );
+
+    if(!response.ok){
+      throw new Error(await response.text());
+    }
+
+    const data = await response.json();
+
+    const count = data.length;
+
+    roundsTodayElement.textContent =
+      count + " / 100";
+
+    /*
+      Chỉ khóa START khi THỰC SỰ
+      chơi đủ 100 round trong hôm nay.
+    */
+
+    if(count >= 100){
+
+      startButton.disabled = true;
+      startButton.textContent =
+        "LIMIT REACHED";
+
+    }else{
+
+      startButton.disabled = false;
+      startButton.textContent =
+        "START";
+
+    }
+
+  }catch(error){
+
+    console.error(
+      "ROUND COUNT ERROR:",
+      error
+    );
+
+    /*
+      Nếu không đọc được số round,
+      vẫn cho START hoạt động.
+    */
+
+    startButton.disabled = false;
+    startButton.textContent =
+      "START";
+
+  }
+
 }
-
-);
-
-
-if(!response.ok){
-
-throw new Error(
-await response.text()
-);
-
-}
-
-
-const data =
-await response.json();
-
-
-roundsTodayElement.textContent =
-Math.min(data.length,100) +
-" / 100";
-
-
-if(data.length >= 100){
-
-startButton.disabled =
-true;
-
-startButton.textContent =
-"LIMIT REACHED";
-
-}
-
-}catch(error){
-
-console.error(
-"ROUND COUNT",
-error
-);
-
-}
-
-}
-
 
 /* ================================
    LEADERBOARD
