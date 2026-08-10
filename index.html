@@ -9,133 +9,132 @@
 *{box-sizing:border-box}
 
 body{
-    margin:0;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#070b16;
-    color:#fff;
-    font-family:Arial,sans-serif
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#070b16;
+  color:#fff;
+  font-family:Arial,sans-serif;
 }
 
 .app{
-    width:min(430px,94vw);
-    min-height:650px;
-    padding:22px;
-    border-radius:24px;
-    background:#0d1426;
-    border:1px solid #24304a
+  width:min(430px,94vw);
+  padding:22px;
+  border-radius:24px;
+  background:#0d1426;
+  border:1px solid #24304a;
 }
 
 .logo{
-    text-align:center;
-    font-size:25px;
-    font-weight:900;
-    margin-bottom:25px
+  text-align:center;
+  font-size:26px;
+  font-weight:900;
+  margin-bottom:24px;
 }
 
 .logo span{color:#38bdf8}
 
 .card{
-    background:#111b30;
-    padding:18px;
-    border-radius:16px;
-    margin-bottom:14px
+  background:#111b30;
+  padding:18px;
+  border-radius:16px;
+  margin-bottom:14px;
 }
 
 .label{
-    color:#94a3b8;
-    font-size:12px
-}
-
-.points{
-    font-size:34px;
-    font-weight:900;
-    color:#38bdf8;
-    margin-top:5px
+  color:#94a3b8;
+  font-size:12px;
 }
 
 input{
-    width:100%;
-    padding:14px;
-    margin:12px 0;
-    border-radius:12px;
-    border:1px solid #334155;
-    background:#0b1220;
-    color:#fff;
-    outline:none
+  width:100%;
+  padding:14px;
+  margin:12px 0;
+  border-radius:12px;
+  border:1px solid #334155;
+  background:#0b1220;
+  color:#fff;
+  outline:none;
 }
 
 button{
-    border:0;
-    cursor:pointer
+  border:0;
+  cursor:pointer;
 }
 
 .main{
-    width:100%;
-    padding:14px;
-    border-radius:12px;
-    background:#38bdf8;
-    color:#04111c;
-    font-weight:900
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  background:#38bdf8;
+  color:#04111c;
+  font-weight:900;
+}
+
+.points{
+  font-size:38px;
+  font-weight:900;
+  color:#38bdf8;
+  margin-top:5px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.stat{
+  background:#111b30;
+  padding:13px;
+  border-radius:13px;
+  text-align:center;
+}
+
+.stat strong{
+  display:block;
+  font-size:20px;
+  margin-top:4px;
 }
 
 .tap-area{
-    height:330px;
-    position:relative;
-    overflow:hidden;
-    border-radius:18px;
-    border:1px solid #24304a;
-    background:#09111f;
-    margin-top:15px
+  height:330px;
+  position:relative;
+  overflow:hidden;
+  border-radius:18px;
+  border:1px solid #24304a;
+  background:#09111f;
+  margin-top:15px;
 }
 
 .target{
-    position:absolute;
-    width:75px;
-    height:75px;
-    border-radius:50%;
-    background:#38bdf8;
-    color:#04111c;
-    font-size:25px;
-    font-weight:900;
-    display:none
+  position:absolute;
+  width:75px;
+  height:75px;
+  border-radius:50%;
+  background:#38bdf8;
+  color:#04111c;
+  font-size:25px;
+  font-weight:900;
+  display:none;
 }
 
 .info{
-    text-align:center;
-    color:#94a3b8;
-    font-size:13px;
-    margin-top:12px
+  text-align:center;
+  color:#94a3b8;
+  font-size:13px;
+  margin-top:12px;
 }
 
 .hidden{display:none}
 
 .error{
-    color:#fb7185;
-    font-size:13px;
-    margin-top:10px;
-    word-break:break-word
-}
-
-.stats{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px
-}
-
-.stat{
-    background:#111b30;
-    padding:13px;
-    border-radius:13px;
-    text-align:center
-}
-
-.stat strong{
-    display:block;
-    font-size:20px;
-    margin-top:4px
+  color:#fb7185;
+  font-size:13px;
+  margin-top:10px;
+  word-break:break-word;
 }
 </style>
 </head>
@@ -145,129 +144,92 @@ button{
 <div class="app">
 
 <div class="logo">
-    ⚡ CRYPTO<span>TAP</span>
+⚡ CRYPTO<span>TAP</span>
 </div>
-
-
-<!-- LOGIN -->
 
 <div id="loginScreen">
 
-    <div class="card">
+  <div class="card">
 
-        <div class="label">
-            PLAYER
-        </div>
+    <div class="label">PLAYER</div>
 
-        <input
-            id="username"
-            maxlength="30"
-            placeholder="Nhập username"
-        >
+    <input
+      id="username"
+      maxlength="30"
+      placeholder="Nhập username"
+    >
 
-        <button
-            class="main"
-            id="loginButton"
-        >
-            ENTER GAME
-        </button>
+    <button
+      class="main"
+      id="loginButton"
+    >
+      ENTER GAME
+    </button>
 
-        <div
-            id="error"
-            class="error"
-        ></div>
+    <div id="error" class="error"></div>
 
-    </div>
+  </div>
 
 </div>
 
 
-<!-- GAME -->
+<div id="gameScreen" class="hidden">
 
-<div
-    id="gameScreen"
-    class="hidden"
+  <div class="card">
 
+    <div class="label">YOUR POINTS</div>
 
-    <div class="card">
-
-        <div class="label">
-            YOUR POINTS
-        </div>
-
-        <div
-            id="points"
-            class="points"
-        >
-            0
-        </div>
-
+    <div id="points" class="points">
+      0
     </div>
 
-
-    <div class="stats">
-
-        <div class="stat">
-
-            <div class="label">
-                TIME
-            </div>
-
-            <strong id="time">
-                15
-            </strong>
-
-        </div>
+  </div>
 
 
-        <div class="stat">
+  <div class="stats">
 
-            <div class="label">
-                ROUND
-            </div>
-
-            <strong id="round">
-                0
-            </strong>
-
-        </div>
-
+    <div class="stat">
+      <div class="label">TIME</div>
+      <strong id="time">15</strong>
     </div>
 
-
-    <div class="tap-area" id="tapArea">
-
-        <button
-            id="startButton"
-            class="main"
-            style="
-                position:absolute;
-                width:180px;
-                left:50%;
-                top:50%;
-                transform:translate(-50%,-50%);
-            "
-        >
-            START
-        </button>
-
-
-        <button
-            id="target"
-            class="target"
-        >
-            ⚡
-        </button>
-
+    <div class="stat">
+      <div class="label">ROUND</div>
+      <strong id="round">0</strong>
     </div>
 
+  </div>
 
-    <div
-        id="message"
-        class="info"
+
+  <div class="tap-area" id="tapArea">
+
+    <button
+      id="startButton"
+      class="main"
+      style="
+        position:absolute;
+        width:180px;
+        left:50%;
+        top:50%;
+        transform:translate(-50%,-50%);
+      "
     >
-        15 giây — tap mục tiêu để kiếm POINT
-    </div>
+      START
+    </button>
+
+    <button
+      id="target"
+      class="target"
+    >
+      ⚡
+    </button>
+
+  </div>
+
+
+  <div id="message" class="info">
+    15 giây — tap mục tiêu để kiếm POINT
+  </div>
 
 </div>
 
@@ -283,17 +245,12 @@ button{
 const SUPABASE_URL =
 "https://qsbuwbdyajoxlsrruzzg.supabase.co";
 
-/*
-   CHỈ THAY GIÁ TRỊ NÀY
-   bằng Publishable key của project.
-*/
-
 const SUPABASE_KEY =
 "sb_publishable_Z7BmFlVoVQu3wCjquLsOHQ_joQwJoaT";
 
 
 /* =========================
-   STATE
+   GAME STATE
 ========================= */
 
 let username = "";
@@ -347,21 +304,17 @@ document.getElementById("message");
 
 
 /* =========================
-   DATABASE HELPERS
+   HEADERS
 ========================= */
 
-function headers(extra = {}){
+function apiHeaders(extra = {}){
 
-    return {
-
-        "apikey": SUPABASE_KEY,
-
-        "Authorization":
-            "Bearer " + SUPABASE_KEY,
-
-        ...extra
-
-    };
+  return {
+    "apikey": SUPABASE_KEY,
+    "Authorization":
+      "Bearer " + SUPABASE_KEY,
+    ...extra
+  };
 
 }
 
@@ -370,275 +323,230 @@ function headers(extra = {}){
    LOGIN
 ========================= */
 
-loginButton.addEventListener(
-"click",
-login
-);
-
+loginButton.onclick = login;
 
 async function login(){
 
-    const name =
-        usernameInput.value.trim();
+  const name =
+    usernameInput.value.trim();
 
+  errorBox.textContent = "";
 
-    if(!name){
-
-        errorBox.textContent =
-            "Nhập username trước.";
-
-        return;
-
-    }
-
+  if(!name){
 
     errorBox.textContent =
-        "Đang kết nối...";
+      "Nhập username trước.";
 
+    return;
+  }
 
-    try{
+  loginButton.disabled = true;
+  loginButton.textContent =
+    "CONNECTING...";
 
-        /*
-          Tìm player
-        */
+  try{
 
-        const findResponse =
-            await fetch(
+    /* Tìm player */
 
-                SUPABASE_URL +
-                "/rest/v1/players" +
-                "?username=eq." +
-                encodeURIComponent(name) +
-                "&select=*",
-
-                {
-                    method:"GET",
-
-                    headers:
-                        headers()
-                }
-
-            );
-
-
-        if(!findResponse.ok){
-
-            throw new Error(
-                await findResponse.text()
-            );
-
+    const response =
+      await fetch(
+        SUPABASE_URL +
+        "/rest/v1/players" +
+        "?username=eq." +
+        encodeURIComponent(name) +
+        "&select=id,username,points",
+        {
+          method:"GET",
+          headers:apiHeaders()
         }
+      );
 
 
-        const players =
-            await findResponse.json();
+    if(!response.ok){
 
-
-        /*
-          Player tồn tại
-        */
-
-        if(players.length){
-
-            username =
-                players[0].username;
-
-            totalPoints =
-                Number(
-                    players[0].Points || 0
-                );
-
-        }
-
-
-        /*
-          Player mới
-        */
-
-        else{
-
-            const createResponse =
-                await fetch(
-
-                    SUPABASE_URL +
-                    "/rest/v1/players",
-
-                    {
-
-                        method:"POST",
-
-                        headers:
-                            headers({
-                                "Content-Type":
-                                    "application/json",
-
-                                "Prefer":
-                                    "return=representation"
-                            }),
-
-                        body:
-                            JSON.stringify({
-
-                                username:name,
-
-                                Points:0
-
-                            })
-
-                    }
-
-                );
-
-
-            if(!createResponse.ok){
-
-                throw new Error(
-                    await createResponse.text()
-                );
-
-            }
-
-
-            const created =
-                await createResponse.json();
-
-
-            username =
-                created[0].username;
-
-            totalPoints = 0;
-
-        }
-
-
-        /*
-          Hiển thị game
-        */
-
-        pointsElement.textContent =
-            totalPoints.toLocaleString();
-
-        loginScreen.classList.add(
-            "hidden"
-        );
-
-        gameScreen.classList.remove(
-            "hidden"
-        );
-
-        message.textContent =
-            "Kết nối thành công ✅";
-
+      throw new Error(
+        await response.text()
+      );
 
     }
 
-    catch(error){
 
-        console.error(error);
+    const players =
+      await response.json();
 
-        errorBox.textContent =
-            "Lỗi kết nối: " +
-            error.message;
+
+    /* Player cũ */
+
+    if(players.length > 0){
+
+      username =
+        players[0].username;
+
+      totalPoints =
+        Number(players[0].points || 0);
 
     }
+
+
+    /* Player mới */
+
+    else{
+
+      const create =
+        await fetch(
+          SUPABASE_URL +
+          "/rest/v1/players",
+          {
+            method:"POST",
+
+            headers:apiHeaders({
+              "Content-Type":
+                "application/json",
+
+              "Prefer":
+                "return=representation"
+            }),
+
+            body:JSON.stringify({
+              username:name,
+              points:0
+            })
+          }
+        );
+
+
+      if(!create.ok){
+
+        throw new Error(
+          await create.text()
+        );
+
+      }
+
+
+      const created =
+        await create.json();
+
+
+      username =
+        created[0].username;
+
+      totalPoints =
+        Number(created[0].points || 0);
+
+    }
+
+
+    pointsElement.textContent =
+      totalPoints.toLocaleString();
+
+    loginScreen.classList.add("hidden");
+
+    gameScreen.classList.remove("hidden");
+
+    message.textContent =
+      "Database connected ✅";
+
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    errorBox.textContent =
+      "Database error: " +
+      error.message;
+
+  }
+
+  finally{
+
+    loginButton.disabled = false;
+
+    loginButton.textContent =
+      "ENTER GAME";
+
+  }
 
 }
 
 
 /* =========================
-   MOVE TARGET
+   TARGET
 ========================= */
 
 function moveTarget(){
 
-    const size = 75;
+  const size = 75;
 
-    const maxX =
-        tapArea.clientWidth - size;
+  const maxX =
+    tapArea.clientWidth - size;
 
-    const maxY =
-        tapArea.clientHeight - size;
+  const maxY =
+    tapArea.clientHeight - size;
 
-    const x =
-        Math.random() * maxX;
+  const x =
+    Math.random() * maxX;
 
-    const y =
-        Math.random() * maxY;
+  const y =
+    Math.random() * maxY;
 
-    target.style.left =
-        x + "px";
+  target.style.left =
+    x + "px";
 
-    target.style.top =
-        y + "px";
+  target.style.top =
+    y + "px";
 
 }
 
 
 /* =========================
-   START ROUND
+   START
 ========================= */
 
-startButton.addEventListener(
-"click",
-startRound
-);
-
+startButton.onclick =
+startRound;
 
 function startRound(){
 
-    if(playing) return;
+  if(playing) return;
+
+  playing = true;
+
+  roundPoints = 0;
+
+  timeLeft = 15;
+
+  roundElement.textContent = "0";
+
+  timeElement.textContent = "15";
+
+  startButton.style.display = "none";
+
+  target.style.display = "block";
+
+  message.textContent =
+    "⚡ TAP!";
+
+  moveTarget();
 
 
-    playing = true;
+  timer =
+    setInterval(() => {
 
-    roundPoints = 0;
+      timeLeft--;
 
-    timeLeft = 15;
+      timeElement.textContent =
+        timeLeft;
 
+      if(timeLeft <= 0){
 
-    roundElement.textContent =
-        "0";
+        endRound();
 
-    timeElement.textContent =
-        "15";
+      }
 
-
-    startButton.style.display =
-        "none";
-
-    target.style.display =
-        "block";
-
-
-    message.textContent =
-        "⚡ TAP!";
-
-
-    moveTarget();
-
-
-    timer =
-        setInterval(
-
-            () => {
-
-                timeLeft--;
-
-                timeElement.textContent =
-                    timeLeft;
-
-
-                if(timeLeft <= 0){
-
-                    endRound();
-
-                }
-
-            },
-
-            1000
-
-        );
+    },1000);
 
 }
 
@@ -647,27 +555,18 @@ function startRound(){
    TAP
 ========================= */
 
-target.addEventListener(
-"click",
-tapTarget
-);
+target.onclick = () => {
 
+  if(!playing) return;
 
-function tapTarget(){
+  roundPoints += 10;
 
-    if(!playing) return;
+  roundElement.textContent =
+    roundPoints;
 
+  moveTarget();
 
-    roundPoints += 10;
-
-
-    roundElement.textContent =
-        roundPoints;
-
-
-    moveTarget();
-
-}
+};
 
 
 /* =========================
@@ -676,105 +575,80 @@ function tapTarget(){
 
 async function endRound(){
 
-    if(!playing) return;
+  if(!playing) return;
+
+  playing = false;
+
+  clearInterval(timer);
+
+  target.style.display = "none";
+
+  startButton.style.display = "block";
+
+  startButton.textContent =
+    "PLAY AGAIN";
 
 
-    playing = false;
+  totalPoints += roundPoints;
 
-    clearInterval(timer);
+  pointsElement.textContent =
+    totalPoints.toLocaleString();
 
-
-    target.style.display =
-        "none";
-
-    startButton.style.display =
-        "block";
+  message.textContent =
+    "Đang lưu POINT...";
 
 
-    startButton.textContent =
-        "PLAY AGAIN";
+  try{
+
+    const update =
+      await fetch(
+        SUPABASE_URL +
+        "/rest/v1/players" +
+        "?username=eq." +
+        encodeURIComponent(username),
+        {
+          method:"PATCH",
+
+          headers:apiHeaders({
+            "Content-Type":
+              "application/json",
+
+            "Prefer":
+              "return=minimal"
+          }),
+
+          body:JSON.stringify({
+            points:totalPoints
+          })
+        }
+      );
 
 
-    /*
-      MVP:
-      cộng POINT sau mỗi round
-    */
+    if(!update.ok){
 
-    totalPoints +=
-        roundPoints;
+      throw new Error(
+        await update.text()
+      );
 
-
-    pointsElement.textContent =
-        totalPoints.toLocaleString();
+    }
 
 
     message.textContent =
-        "Đang lưu POINT...";
+      "+" +
+      roundPoints +
+      " POINT đã lưu ✅";
 
+  }
 
-    try{
+  catch(error){
 
-        const updateResponse =
-            await fetch(
+    console.error(error);
 
-                SUPABASE_URL +
-                "/rest/v1/players" +
-                "?username=eq." +
-                encodeURIComponent(username),
+    message.textContent =
+      "Lưu POINT lỗi: " +
+      error.message;
 
-                {
-
-                    method:"PATCH",
-
-                    headers:
-                        headers({
-
-                            "Content-Type":
-                                "application/json",
-
-                            "Prefer":
-                                "return=minimal"
-
-                        }),
-
-                    body:
-                        JSON.stringify({
-
-                            Points:
-                                totalPoints
-
-                        })
-
-                }
-
-            );
-
-
-        if(!updateResponse.ok){
-
-            throw new Error(
-                await updateResponse.text()
-            );
-
-        }
-
-
-        message.textContent =
-            "+" +
-            roundPoints +
-            " POINT ✅";
-
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-        message.textContent =
-            "Không lưu được POINT.";
-
-    }
+  }
 
 }
 
