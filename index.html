@@ -55,7 +55,8 @@ input{
   background:#09111f;
   border:1px solid #334155;
   border-radius:10px;
-  color:white
+  color:white;
+  outline:none
 }
 
 button{
@@ -151,7 +152,8 @@ button{
 .error{
   color:#fb7185;
   font-size:13px;
-  margin-top:8px
+  margin-top:8px;
+  word-break:break-word
 }
 
 .hidden{
@@ -370,20 +372,21 @@ style="margin-top:8px"
 
 <script>
 
-/* =========================
+/* =====================================
    SUPABASE
-========================= */
+===================================== */
 
 const SUPABASE_URL =
 "https://qsbuwbdyajoxlsrruzzg.supabase.co";
+
 
 const SUPABASE_KEY =
 "sb_publishable_Z7BmFlVoVQu3wCjquLsOHQ_joQwJoaT";
 
 
-/* =========================
-   STATE
-========================= */
+/* =====================================
+   GAME STATE
+===================================== */
 
 let username = "";
 
@@ -398,9 +401,9 @@ let seconds = 15;
 let timer = null;
 
 
-/* =========================
+/* =====================================
    ELEMENTS
-========================= */
+===================================== */
 
 const loginScreen =
 document.getElementById("loginScreen");
@@ -448,737 +451,965 @@ const leaderboard =
 document.getElementById("leaderboard");
 
 
-/* =========================
-   HEADERS
-========================= */
+/* =====================================
+   SUPABASE HEADERS
+===================================== */
 
 function headers(){
 
-return {
-"apikey":SUPABASE_KEY,
-"Authorization":"Bearer "+SUPABASE_KEY
-};
+  return {
+
+    "apikey":
+      SUPABASE_KEY,
+
+    "Authorization":
+      "Bearer " + SUPABASE_KEY
+
+  };
 
 }
 
 
-/* =========================
+/* =====================================
    LOGIN
-========================= */
+===================================== */
 
 loginButton.onclick =
-async function(){
-
-const name =
-usernameInput.value.trim();
+login;
 
 
-if(!name){
+async function login(){
 
-errorBox.textContent =
-"Nhập username.";
+  const name =
+    usernameInput.value.trim();
 
-return;
+
+  errorBox.textContent =
+    "";
+
+
+  if(!name){
+
+    errorBox.textContent =
+      "Nhập username.";
+
+    return;
+
+  }
+
+
+  loginButton.disabled =
+    true;
+
+  loginButton.textContent =
+    "CONNECTING...";
+
+
+  try{
+
+    /*
+      Tìm player
+    */
+
+    const response =
+      await fetch(
+
+        SUPABASE_URL +
+        "/rest/v1/players" +
+        "?username=eq." +
+        encodeURIComponent(name) +
+        "&select=username,points",
+
+        {
+          headers:
+            headers()
+        }
+
+      );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        await response.text()
+      );
+
+    }
+
+
+    const players =
+      await response.json();
+
+
+    /*
+      PLAYER CŨ
+    */
+
+    if(players.length){
+
+      username =
+        players[0].username;
+
+    }
+
+
+    /*
+      PLAYER MỚI
+    */
+
+    else{
+
+      const create =
+        await fetch(
+
+          SUPABASE_URL +
+          "/rest/v1/players",
+
+          {
+
+            method:
+              "POST",
+
+            headers:{
+              ...headers(),
+
+              "Content-Type":
+                "application/json",
+
+              "Prefer":
+                "return=representation"
+
+            },
+
+            body:
+              JSON.stringify({
+
+                username:
+                  name,
+
+                points:
+                  0
+
+              })
+
+          }
+
+        );
+
+
+      if(!create.ok){
+
+        throw new Error(
+          await create.text()
+        );
+
+      }
+
+
+      const created =
+        await create.json();
+
+
+      username =
+        created[0].username;
+
+    }
+
+
+    /*
+      Load player
+    */
+
+    await loadPlayer();
+
+
+    /*
+      Show game
+    */
+
+    loginScreen.classList.add(
+      "hidden"
+    );
+
+    gameScreen.classList.remove(
+      "hidden"
+    );
+
+
+    message.textContent =
+      "Connected ✅";
+
+
+    /*
+      Load data
+    */
+
+    await loadRounds();
+
+    await loadLeaderboard();
+
+
+  }catch(error){
+
+    console.error(
+      "LOGIN ERROR:",
+      error
+    );
+
+
+    errorBox.textContent =
+      "Database error: " +
+      error.message;
+
+  }finally{
+
+    loginButton.disabled =
+      false;
+
+    loginButton.textContent =
+      "ENTER GAME";
+
+  }
 
 }
 
 
-loginButton.disabled =
-true;
-
-loginButton.textContent =
-"CONNECTING...";
-
-
-try{
-
-const response =
-await fetch(
-
-SUPABASE_URL+
-"/rest/v1/players"+
-"?username=eq."+
-encodeURIComponent(name)+
-"&select=username,points",
-
-{
-headers:headers()
-}
-
-);
-
-
-if(!response.ok){
-
-throw new Error(
-await response.text()
-);
-
-}
-
-
-const players =
-await response.json();
-
-
-/* EXISTING */
-
-if(players.length){
-
-username =
-players[0].username;
-
-}
-
-
-/* NEW */
-
-else{
-
-const create =
-await fetch(
-
-SUPABASE_URL+
-"/rest/v1/players",
-
-{
-
-method:"POST",
-
-headers:{
-...headers(),
-"Content-Type":
-"application/json",
-"Prefer":
-"return=representation"
-},
-
-body:JSON.stringify({
-
-username:name,
-points:0
-
-})
-
-}
-
-);
-
-
-if(!create.ok){
-
-throw new Error(
-await create.text()
-);
-
-}
-
-
-const created =
-await create.json();
-
-
-username =
-created[0].username;
-
-}
-
-
-await loadPlayer();
-
-
-loginScreen.classList.add(
-"hidden"
-);
-
-gameScreen.classList.remove(
-"hidden"
-);
-
-
-await loadRounds();
-
-await loadLeaderboard();
-
-
-message.textContent =
-"Connected ✅";
-
-
-}catch(error){
-
-console.error(error);
-
-errorBox.textContent =
-"Database error: "+
-error.message;
-
-}finally{
-
-loginButton.disabled =
-false;
-
-loginButton.textContent =
-"ENTER GAME";
-
-}
-
-};
-
-
-/* =========================
+/* =====================================
    LOAD PLAYER
-========================= */
+===================================== */
 
 async function loadPlayer(){
 
-const response =
-await fetch(
+  const response =
+    await fetch(
 
-SUPABASE_URL+
-"/rest/v1/players"+
-"?username=eq."+
-encodeURIComponent(username)+
-"&select=points",
+      SUPABASE_URL +
+      "/rest/v1/players" +
+      "?username=eq." +
+      encodeURIComponent(username) +
+      "&select=points",
 
-{
-headers:headers()
+      {
+        headers:
+          headers()
+      }
+
+    );
+
+
+  if(!response.ok){
+
+    throw new Error(
+      await response.text()
+    );
+
+  }
+
+
+  const data =
+    await response.json();
+
+
+  if(!data.length){
+
+    throw new Error(
+      "Player not found"
+    );
+
+  }
+
+
+  points =
+    Number(
+      data[0].points || 0
+    );
+
+
+  pointsBox.textContent =
+    points.toLocaleString();
+
 }
 
-);
 
-
-if(!response.ok){
-
-throw new Error(
-await response.text()
-);
-
-}
-
-
-const data =
-await response.json();
-
-
-if(!data.length){
-
-throw new Error(
-"Player not found"
-);
-
-}
-
-
-points =
-Number(data[0].points||0);
-
-
-pointsBox.textContent =
-points.toLocaleString();
-
-}
-
-
-/* =========================
-   LOAD ROUNDS
-========================= */
+/* =====================================
+   LOAD ROUNDS TODAY
+   VIETNAM TIME
+===================================== */
 
 async function loadRounds(){
 
-try{
+  try{
 
-const response =
-await fetch(
+    const response =
+      await fetch(
 
-SUPABASE_URL+
-"/rest/v1/game_rounds"+
-"?username=eq."+
-encodeURIComponent(username)+
-"&select=id,created_at",
+        SUPABASE_URL +
+        "/rest/v1/game_rounds" +
+        "?username=eq." +
+        encodeURIComponent(username) +
+        "&select=id,created_at" +
+        "&order=created_at.desc",
 
-{
-headers:headers()
+        {
+          headers:
+            headers()
+        }
+
+      );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        await response.text()
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    /*
+      Ngày hiện tại theo giờ Việt Nam
+    */
+
+    const now =
+      new Date();
+
+
+    const vietnamDate =
+      new Intl.DateTimeFormat(
+        "en-CA",
+        {
+          timeZone:
+            "Asia/Ho_Chi_Minh",
+
+          year:
+            "numeric",
+
+          month:
+            "2-digit",
+
+          day:
+            "2-digit"
+        }
+      ).format(now);
+
+
+    /*
+      Đếm round trong ngày
+    */
+
+    const count =
+      data.filter(
+
+        row => {
+
+          const roundDate =
+            new Intl.DateTimeFormat(
+              "en-CA",
+              {
+                timeZone:
+                  "Asia/Ho_Chi_Minh",
+
+                year:
+                  "numeric",
+
+                month:
+                  "2-digit",
+
+                day:
+                  "2-digit"
+              }
+            ).format(
+              new Date(
+                row.created_at
+              )
+            );
+
+
+          return (
+            roundDate ===
+            vietnamDate
+          );
+
+        }
+
+      ).length;
+
+
+    /*
+      Hiển thị
+    */
+
+    roundsBox.textContent =
+      Math.min(
+        count,
+        100
+      ) +
+      " / 100";
+
+
+    /*
+      Giới hạn 100 round/ngày
+    */
+
+    if(count >= 100){
+
+      startButton.disabled =
+        true;
+
+      startButton.textContent =
+        "LIMIT REACHED";
+
+    }else{
+
+      startButton.disabled =
+        false;
+
+      startButton.textContent =
+        "START";
+
+    }
+
+
+  }catch(error){
+
+    console.error(
+      "LOAD ROUNDS ERROR:",
+      error
+    );
+
+
+    /*
+      Không khóa game nếu
+      bộ đếm bị lỗi
+    */
+
+    startButton.disabled =
+      false;
+
+    startButton.textContent =
+      "START";
+
+  }
+
 }
 
-);
 
-
-if(!response.ok){
-
-throw new Error(
-await response.text()
-);
-
-}
-
-
-const data =
-await response.json();
-
-
-const today =
-new Date().toISOString()
-.slice(0,10);
-
-
-const count =
-data.filter(
-row =>
-String(row.created_at)
-.startsWith(today)
-).length;
-
-
-roundsBox.textContent =
-Math.min(count,100)+
-" / 100";
-
-
-if(count>=100){
-
-startButton.disabled =
-true;
-
-startButton.textContent =
-"LIMIT REACHED";
-
-}else{
-
-startButton.disabled =
-false;
-
-}
-
-}catch(error){
-
-console.error(error);
-
-startButton.disabled =
-false;
-
-}
-
-}
-
-
-/* =========================
+/* =====================================
    LEADERBOARD
-========================= */
+===================================== */
 
 async function loadLeaderboard(){
 
-try{
+  try{
 
-const response =
-await fetch(
+    const response =
+      await fetch(
 
-SUPABASE_URL+
-"/rest/v1/leaderboard"+
-"?select=username,points"+
-"&limit=10",
+        SUPABASE_URL +
+        "/rest/v1/leaderboard" +
+        "?select=username,points" +
+        "&limit=10",
 
-{
-headers:headers()
+        {
+          headers:
+            headers()
+        }
+
+      );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        await response.text()
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if(!data.length){
+
+      leaderboard.innerHTML =
+        "Chưa có người chơi.";
+
+      return;
+
+    }
+
+
+    leaderboard.innerHTML =
+      data.map(
+
+        (player,index) => {
+
+          const safeName =
+            String(
+              player.username ||
+              ""
+            ).replace(
+              /[&<>"']/g,
+              ""
+            );
+
+
+          const playerPoints =
+            Number(
+              player.points ||
+              0
+            );
+
+
+          return `
+
+            <div class="rank">
+
+              <span>
+                ${index + 1}.
+                ${safeName}
+              </span>
+
+              <span class="rank-points">
+                ${playerPoints.toLocaleString()}
+              </span>
+
+            </div>
+
+          `;
+
+        }
+
+      ).join("");
+
+
+  }catch(error){
+
+    console.error(
+      "LEADERBOARD ERROR:",
+      error
+    );
+
+
+    leaderboard.innerHTML =
+      "Không tải được TOP.";
+
+  }
+
 }
 
-);
 
-
-if(!response.ok){
-
-throw new Error(
-await response.text()
-);
-
-}
-
-
-const data =
-await response.json();
-
-
-leaderboard.innerHTML =
-data.map(
-(player,index)=>`
-
-<div class="rank">
-
-<span>
-${index+1}.
-${String(
-player.username||""
-).replace(
-/[&<>"']/g,
-""
-)}
-</span>
-
-<span class="rank-points">
-${Number(
-player.points||0
-).toLocaleString()}
-</span>
-
-</div>
-
-`
-).join("");
-
-
-}catch(error){
-
-leaderboard.innerHTML =
-"Không tải được TOP.";
-
-}
-
-}
-
-
-/* =========================
+/* =====================================
    MOVE TARGET
-========================= */
+===================================== */
 
 function moveTarget(){
 
-const size = 72;
-
-const maxX =
-game.clientWidth-size;
-
-const maxY =
-game.clientHeight-size;
+  const size =
+    72;
 
 
-target.style.left =
-Math.random()*
-Math.max(1,maxX)+
-"px";
+  const maxX =
+    Math.max(
+      1,
+      game.clientWidth -
+      size
+    );
 
-target.style.top =
-Math.random()*
-Math.max(1,maxY)+
-"px";
+
+  const maxY =
+    Math.max(
+      1,
+      game.clientHeight -
+      size
+    );
+
+
+  target.style.left =
+    Math.random() *
+    maxX +
+    "px";
+
+
+  target.style.top =
+    Math.random() *
+    maxY +
+    "px";
 
 }
 
 
-/* =========================
-   START
-========================= */
+/* =====================================
+   START ROUND
+===================================== */
 
 startButton.onclick =
-function(){
-
-if(playing)
-return;
+startRound;
 
 
-playing =
-true;
+function startRound(){
 
-taps =
-0;
-
-seconds =
-15;
+  if(playing)
+    return;
 
 
-roundScoreBox.textContent =
-"0";
-
-timerBox.textContent =
-"15";
+  if(startButton.disabled)
+    return;
 
 
-startButton.style.display =
-"none";
-
-target.style.display =
-"block";
+  playing =
+    true;
 
 
-message.textContent =
-"⚡ TAP!";
+  taps =
+    0;
 
 
-moveTarget();
+  seconds =
+    15;
 
 
-timer =
-setInterval(
-
-function(){
-
-seconds--;
-
-timerBox.textContent =
-seconds;
+  roundScoreBox.textContent =
+    "0";
 
 
-if(seconds<=0){
+  timerBox.textContent =
+    "15";
 
-finishRound();
+
+  startButton.style.display =
+    "none";
+
+
+  target.style.display =
+    "block";
+
+
+  message.textContent =
+    "⚡ TAP!";
+
+
+  moveTarget();
+
+
+  timer =
+    setInterval(
+
+      function(){
+
+        seconds--;
+
+
+        timerBox.textContent =
+          seconds;
+
+
+        if(seconds <= 0){
+
+          finishRound();
+
+        }
+
+      },
+
+      1000
+
+    );
 
 }
 
-},
 
-1000
-
-);
-
-};
-
-
-/* =========================
+/* =====================================
    TAP
-========================= */
+===================================== */
 
 target.onclick =
 function(){
 
-if(!playing)
-return;
+  if(!playing)
+    return;
 
 
-taps++;
+  taps++;
 
 
-roundScoreBox.textContent =
-taps;
+  roundScoreBox.textContent =
+    taps;
 
 
-moveTarget();
+  moveTarget();
 
 };
 
 
-/* =========================
-   FINISH
-========================= */
+/* =====================================
+   FINISH ROUND
+===================================== */
 
 async function finishRound(){
 
-if(!playing)
-return;
+  if(!playing)
+    return;
 
 
-playing =
-false;
+  playing =
+    false;
 
 
-clearInterval(timer);
+  clearInterval(
+    timer
+  );
 
 
-target.style.display =
-"none";
-
-startButton.style.display =
-"block";
-
-startButton.textContent =
-"PLAY AGAIN";
+  target.style.display =
+    "none";
 
 
-message.textContent =
-"Đang tính điểm...";
+  startButton.style.display =
+    "block";
 
 
-try{
+  startButton.textContent =
+    "PLAY AGAIN";
 
-const response =
-await fetch(
 
-SUPABASE_URL+
-"/rest/v1/rpc/finish_game_round",
+  message.textContent =
+    "Đang tính điểm...";
 
-{
 
-method:"POST",
+  try{
 
-headers:{
-...headers(),
-"Content-Type":
-"application/json"
-},
+    const response =
+      await fetch(
 
-body:JSON.stringify({
+        SUPABASE_URL +
+        "/rest/v1/rpc/finish_game_round",
 
-p_username:
-username,
+        {
 
-p_taps:
-taps
+          method:
+            "POST",
 
-})
+          headers:{
+            ...headers(),
+
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+
+              p_username:
+                username,
+
+              p_taps:
+                taps
+
+            })
+
+        }
+
+      );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        await response.text()
+      );
+
+    }
+
+
+    const reward =
+      Number(
+        await response.json()
+      );
+
+
+    /*
+      Cộng point ngay trên giao diện
+    */
+
+    points +=
+      reward;
+
+
+    pointsBox.textContent =
+      points.toLocaleString();
+
+
+    roundScoreBox.textContent =
+      reward;
+
+
+    message.textContent =
+      "🎉 +" +
+      reward +
+      " POINT";
+
+
+    /*
+      Cập nhật số round
+    */
+
+    await loadRounds();
+
+
+    /*
+      Cập nhật TOP
+    */
+
+    await loadLeaderboard();
+
+
+  }catch(error){
+
+    console.error(
+      "FINISH ERROR:",
+      error
+    );
+
+
+    message.textContent =
+      "❌ " +
+      error.message;
+
+  }
 
 }
 
-);
 
-
-if(!response.ok){
-
-throw new Error(
-await response.text()
-);
-
-}
-
-
-const reward =
-Number(
-await response.json()
-);
-
-
-points +=
-reward;
-
-
-pointsBox.textContent =
-points.toLocaleString();
-
-
-roundScoreBox.textContent =
-reward;
-
-
-message.textContent =
-"🎉 +"+
-reward+
-" POINT";
-
-
-await loadRounds();
-
-await loadLeaderboard();
-
-
-}catch(error){
-
-console.error(
-"FINISH ERROR:",
-error
-);
-
-message.textContent =
-"❌ "+error.message;
-
-}
-
-}
-
-
-/* =========================
+/* =====================================
    DAILY BONUS
-========================= */
+===================================== */
 
 bonusButton.onclick =
-async function(){
-
-bonusButton.disabled =
-true;
-
-bonusButton.textContent =
-"CHECKING...";
+claimBonus;
 
 
-try{
+async function claimBonus(){
 
-const response =
-await fetch(
+  bonusButton.disabled =
+    true;
 
-SUPABASE_URL+
-"/rest/v1/rpc/claim_daily_bonus",
+  bonusButton.textContent =
+    "CHECKING...";
 
-{
 
-method:"POST",
+  try{
 
-headers:{
-...headers(),
-"Content-Type":
-"application/json"
-},
+    const response =
+      await fetch(
 
-body:JSON.stringify({
+        SUPABASE_URL +
+        "/rest/v1/rpc/claim_daily_bonus",
 
-p_username:
-username
+        {
 
-})
+          method:
+            "POST",
+
+          headers:{
+            ...headers(),
+
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+
+              p_username:
+                username
+
+            })
+
+        }
+
+      );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        await response.text()
+      );
+
+    }
+
+
+    const reward =
+      Number(
+        await response.json()
+      );
+
+
+    if(reward > 0){
+
+      points +=
+        reward;
+
+
+      pointsBox.textContent =
+        points.toLocaleString();
+
+
+      bonusButton.textContent =
+        "CLAIMED TODAY";
+
+
+      message.textContent =
+        "🎁 +" +
+        reward +
+        " POINT";
+
+    }else{
+
+      bonusButton.textContent =
+        "ALREADY CLAIMED";
+
+
+      message.textContent =
+        "Đã nhận Daily Bonus hôm nay.";
+
+    }
+
+
+    await loadLeaderboard();
+
+
+  }catch(error){
+
+    console.error(
+      "BONUS ERROR:",
+      error
+    );
+
+
+    bonusButton.disabled =
+      false;
+
+
+    bonusButton.textContent =
+      "CLAIM BONUS";
+
+
+    message.textContent =
+      "❌ " +
+      error.message;
+
+  }
 
 }
-
-);
-
-
-if(!response.ok){
-
-throw new Error(
-await response.text()
-);
-
-}
-
-
-const reward =
-Number(
-await response.json()
-);
-
-
-if(reward>0){
-
-points +=
-reward;
-
-
-pointsBox.textContent =
-points.toLocaleString();
-
-
-bonusButton.textContent =
-"CLAIMED TODAY";
-
-
-message.textContent =
-"🎁 +"+
-reward+
-" POINT";
-
-}else{
-
-bonusButton.textContent =
-"ALREADY CLAIMED";
-
-message.textContent =
-"Đã nhận Daily Bonus hôm nay.";
-
-}
-
-await loadLeaderboard();
-
-
-}catch(error){
-
-console.error(error);
-
-bonusButton.disabled =
-false;
-
-bonusButton.textContent =
-"CLAIM BONUS";
-
-message.textContent =
-"❌ "+error.message;
-
-}
-
-};
 
 </script>
 
