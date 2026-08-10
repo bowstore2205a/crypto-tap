@@ -6,7 +6,9 @@
 <title>Crypto Tap</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
@@ -34,7 +36,9 @@ body{
   margin-bottom:24px;
 }
 
-.logo span{color:#38bdf8}
+.logo span{
+  color:#38bdf8;
+}
 
 .card{
   background:#111b30;
@@ -181,123 +185,38 @@ button{
 
 <div class="app">
 
-<div class="logo">
-⚡ CRYPTO<span>TAP</span>
-</div>
-
-
-<!-- LOGIN -->
-
-<div id="loginScreen">
-
-  <div class="card">
-
-    <div class="label">
-      PLAYER
-    </div>
-
-    <input
-      id="username"
-      maxlength="30"
-      placeholder="Nhập username"
-    >
-
-    <button
-      class="main"
-      id="loginButton"
-    >
-      ENTER GAME
-    </button>
-
-    <div
-      id="error"
-      class="error"
-    ></div>
-
-  </div>
-
-</div>
-
-
-<!-- GAME -->
-
-<div
-  id="gameScreen"
-  class="hidden"
->
-
-  <!-- POINTS -->
-
-  <div class="card">
-
-    <div class="label">
-      YOUR POINTS
-    </div>
-
-    <div
-      id="points"
-      class="points"
-    >
-      0
-    </div>
-
+  <div class="logo">
+    ⚡ CRYPTO<span>TAP</span>
   </div>
 
 
-  <!-- DAILY BONUS -->
+  <!-- LOGIN -->
 
-  <div class="card bonus">
+  <div id="loginScreen">
 
-    <div class="label">
-      🎁 DAILY BONUS
-    </div>
-
-    <div
-      style="
-        margin-top:6px;
-        font-size:18px;
-        font-weight:bold;
-      "
-    >
-      +100 POINT
-    </div>
-
-    <button
-      id="bonusButton"
-      class="main"
-    >
-      CLAIM BONUS
-    </button>
-
-  </div>
-
-
-  <!-- STATS -->
-
-  <div class="stats">
-
-    <div class="stat">
+    <div class="card">
 
       <div class="label">
-        ROUNDS TODAY
+        PLAYER
       </div>
 
-      <strong id="roundsToday">
-        0 / 100
-      </strong>
+      <input
+        id="username"
+        maxlength="30"
+        placeholder="Nhập username"
+      >
 
-    </div>
+      <button
+        class="main"
+        id="loginButton"
+      >
+        ENTER GAME
+      </button>
 
-
-    <div class="stat">
-
-      <div class="label">
-        ROUND SCORE
-      </div>
-
-      <strong id="round">
-        0
-      </strong>
+      <div
+        id="error"
+        class="error"
+      ></div>
 
     </div>
 
@@ -307,70 +226,155 @@ button{
   <!-- GAME -->
 
   <div
-    class="tap-area"
-    id="tapArea"
+    id="gameScreen"
+    class="hidden"
   >
 
-    <button
-      id="startButton"
-      class="main"
-      style="
-        position:absolute;
-        width:180px;
-        left:50%;
-        top:50%;
-        transform:translate(-50%,-50%);
-      "
-    >
-      START
-    </button>
+    <!-- POINTS -->
 
+    <div class="card">
 
-    <button
-      id="target"
-      class="target"
-    >
-      ⚡
-    </button>
+      <div class="label">
+        YOUR POINTS
+      </div>
 
-  </div>
+      <div
+        id="points"
+        class="points"
+      >
+        0
+      </div>
 
-
-  <div
-    id="message"
-    class="info"
-  >
-    15 giây — tap mục tiêu để kiếm POINT
-  </div>
-
-
-  <!-- LEADERBOARD -->
-
-  <div class="card">
-
-    <div class="label">
-      🏆 TOP 10 PLAYERS
     </div>
+
+
+    <!-- DAILY BONUS -->
+
+    <div class="card bonus">
+
+      <div class="label">
+        🎁 DAILY BONUS
+      </div>
+
+      <div
+        style="
+          margin-top:6px;
+          font-size:18px;
+          font-weight:bold;
+        "
+      >
+        +100 POINT
+      </div>
+
+      <button
+        id="bonusButton"
+        class="main"
+      >
+        CLAIM BONUS
+      </button>
+
+    </div>
+
+
+    <!-- STATS -->
+
+    <div class="stats">
+
+      <div class="stat">
+
+        <div class="label">
+          ROUNDS TODAY
+        </div>
+
+        <strong id="roundsToday">
+          0 / 100
+        </strong>
+
+      </div>
+
+
+      <div class="stat">
+
+        <div class="label">
+          ROUND SCORE
+        </div>
+
+        <strong id="round">
+          0
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- GAME AREA -->
 
     <div
-      id="leaderboard"
-      style="margin-top:10px"
+      class="tap-area"
+      id="tapArea"
     >
-      Đang tải...
+
+      <button
+        id="startButton"
+        class="main"
+        style="
+          position:absolute;
+          width:180px;
+          left:50%;
+          top:50%;
+          transform:translate(-50%,-50%);
+        "
+      >
+        START
+      </button>
+
+
+      <button
+        id="target"
+        class="target"
+      >
+        ⚡
+      </button>
+
+    </div>
+
+
+    <div
+      id="message"
+      class="info"
+    >
+      15 giây — tap mục tiêu để kiếm POINT
+    </div>
+
+
+    <!-- LEADERBOARD -->
+
+    <div class="card">
+
+      <div class="label">
+        🏆 TOP 10 PLAYERS
+      </div>
+
+      <div
+        id="leaderboard"
+        style="margin-top:10px"
+      >
+        Đang tải...
+      </div>
+
     </div>
 
   </div>
-
-</div>
 
 </div>
 
 
 <script>
 
-/* =================================
+/* =====================================
    SUPABASE
-================================= */
+===================================== */
 
 const SUPABASE_URL =
 "https://qsbuwbdyajoxlsrruzzg.supabase.co";
@@ -380,9 +384,9 @@ const SUPABASE_KEY =
 "sb_publishable_Z7BmFlVoVQu3wCjquLsOHQ_joQwJoaT";
 
 
-/* =================================
-   STATE
-================================= */
+/* =====================================
+   GAME STATE
+===================================== */
 
 let username = "";
 
@@ -397,9 +401,9 @@ let timeLeft = 15;
 let timer = null;
 
 
-/* =================================
+/* =====================================
    ELEMENTS
-================================= */
+===================================== */
 
 const loginScreen =
 document.getElementById("loginScreen");
@@ -425,6 +429,9 @@ document.getElementById("roundsToday");
 const roundElement =
 document.getElementById("round");
 
+const timeElement =
+document.getElementById("time");
+
 const tapArea =
 document.getElementById("tapArea");
 
@@ -444,10 +451,9 @@ const bonusButton =
 document.getElementById("bonusButton");
 
 
-
-/* =================================
-   HEADERS
-================================= */
+/* =====================================
+   API HEADERS
+===================================== */
 
 function apiHeaders(extra = {}){
 
@@ -466,9 +472,9 @@ function apiHeaders(extra = {}){
 }
 
 
-/* =================================
+/* =====================================
    LOAD PLAYER
-================================= */
+===================================== */
 
 async function loadPlayer(){
 
@@ -482,8 +488,8 @@ async function loadPlayer(){
       "&select=id,username,points",
 
       {
-        headers:
-          apiHeaders()
+        method:"GET",
+        headers:apiHeaders()
       }
 
     );
@@ -523,9 +529,9 @@ async function loadPlayer(){
 }
 
 
-/* =================================
-   LOAD TODAY'S ROUNDS
-================================= */
+/* =====================================
+   LOAD TODAY ROUNDS
+===================================== */
 
 async function loadRoundsToday(){
 
@@ -568,8 +574,8 @@ async function loadRoundsToday(){
         "&select=id",
 
         {
-          headers:
-            apiHeaders()
+          method:"GET",
+          headers:apiHeaders()
         }
 
       );
@@ -617,9 +623,9 @@ async function loadRoundsToday(){
 }
 
 
-/* =================================
+/* =====================================
    LEADERBOARD
-================================= */
+===================================== */
 
 async function loadLeaderboard(){
 
@@ -638,8 +644,8 @@ async function loadLeaderboard(){
         "&limit=10",
 
         {
-          headers:
-            apiHeaders()
+          method:"GET",
+          headers:apiHeaders()
         }
 
       );
@@ -670,31 +676,41 @@ async function loadLeaderboard(){
 
     leaderboard.innerHTML =
       players.map(
-        (player,index) => `
+        (player,index) => {
 
-          <div class="rank">
+          const safeName =
+            String(
+              player.username || ""
+            ).replace(
+              /[&<>"']/g,
+              ""
+            );
 
-            <span class="rank-name">
-              ${index + 1}.
-              ${String(
-                player.username || ""
-              ).replace(
-                /[&<>"']/g,
-                ""
-              )}
-            </span>
 
-            <span class="rank-points">
-              ${Number(
-                player.points || 0
-              ).toLocaleString()}
-            </span>
+          const points =
+            Number(
+              player.points || 0
+            );
 
-          </div>
 
-        `
+          return `
+
+            <div class="rank">
+
+              <span class="rank-name">
+                ${index + 1}. ${safeName}
+              </span>
+
+              <span class="rank-points">
+                ${points.toLocaleString()}
+              </span>
+
+            </div>
+
+          `;
+
+        }
       ).join("");
-
 
   }
 
@@ -705,6 +721,7 @@ async function loadLeaderboard(){
       error
     );
 
+
     leaderboard.innerHTML =
       "Không tải được TOP.";
 
@@ -713,9 +730,9 @@ async function loadLeaderboard(){
 }
 
 
-/* =================================
+/* =====================================
    DAILY BONUS
-================================= */
+===================================== */
 
 bonusButton.onclick =
 claimBonus;
@@ -744,14 +761,18 @@ async function claimBonus(){
 
           headers:
             apiHeaders({
+
               "Content-Type":
                 "application/json"
+
             }),
 
           body:
             JSON.stringify({
+
               p_username:
                 username
+
             })
 
         }
@@ -779,6 +800,7 @@ async function claimBonus(){
       totalPoints +=
         reward;
 
+
       pointsElement.textContent =
         totalPoints.toLocaleString();
 
@@ -792,13 +814,13 @@ async function claimBonus(){
       bonusButton.textContent =
         "CLAIMED TODAY";
 
-
     }
 
     else{
 
       message.textContent =
         "Daily Bonus đã nhận hôm nay.";
+
 
       bonusButton.textContent =
         "ALREADY CLAIMED";
@@ -812,11 +834,16 @@ async function claimBonus(){
 
   catch(error){
 
-    console.error(error);
+    console.error(
+      "BONUS ERROR:",
+      error
+    );
+
 
     message.textContent =
       "Bonus lỗi: " +
       error.message;
+
 
     bonusButton.disabled =
       false;
@@ -829,9 +856,9 @@ async function claimBonus(){
 }
 
 
-/* =================================
+/* =====================================
    LOGIN
-================================= */
+===================================== */
 
 loginButton.onclick =
 login;
@@ -876,8 +903,8 @@ async function login(){
         "&select=id,username,points",
 
         {
-          headers:
-            apiHeaders()
+          method:"GET",
+          headers:apiHeaders()
         }
 
       );
@@ -896,12 +923,17 @@ async function login(){
       await response.json();
 
 
-    if(players.length){
+    /* PLAYER CŨ */
+
+    if(players.length > 0){
 
       username =
         players[0].username;
 
     }
+
+
+    /* PLAYER MỚI */
 
     else{
 
@@ -985,13 +1017,18 @@ async function login(){
 
   catch(error){
 
-    console.error(error);
+    console.error(
+      "LOGIN ERROR:",
+      error
+    );
+
 
     errorBox.textContent =
       "Database error: " +
       error.message;
 
   }
+
 
   finally{
 
@@ -1006,21 +1043,27 @@ async function login(){
 }
 
 
-/* =================================
+/* =====================================
    MOVE TARGET
-================================= */
+===================================== */
 
 function moveTarget(){
 
   const size = 75;
 
+
   const maxX =
-    tapArea.clientWidth -
-    size;
+    Math.max(
+      0,
+      tapArea.clientWidth - size
+    );
+
 
   const maxY =
-    tapArea.clientHeight -
-    size;
+    Math.max(
+      0,
+      tapArea.clientHeight - size
+    );
 
 
   target.style.left =
@@ -1037,9 +1080,9 @@ function moveTarget(){
 }
 
 
-/* =================================
+/* =====================================
    START ROUND
-================================= */
+===================================== */
 
 startButton.onclick =
 startRound;
@@ -1048,6 +1091,10 @@ startRound;
 function startRound(){
 
   if(playing)
+    return;
+
+
+  if(startButton.disabled)
     return;
 
 
@@ -1107,9 +1154,9 @@ function startRound(){
 }
 
 
-/* =================================
+/* =====================================
    TAP
-================================= */
+===================================== */
 
 target.onclick =
 function(){
@@ -1130,9 +1177,9 @@ function(){
 };
 
 
-/* =================================
+/* =====================================
    END ROUND
-================================= */
+===================================== */
 
 async function endRound(){
 
@@ -1240,7 +1287,10 @@ async function endRound(){
 
   catch(error){
 
-    console.error(error);
+    console.error(
+      "ROUND ERROR:",
+      error
+    );
 
 
     message.textContent =
