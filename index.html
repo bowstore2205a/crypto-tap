@@ -229,8 +229,6 @@ id="gameScreen"
 class="hidden"
 >
 
-<!-- POINTS -->
-
 <div class="card">
 
 <div class="label">
@@ -379,7 +377,6 @@ style="margin-top:8px"
 const SUPABASE_URL =
 "https://qsbuwbdyajoxlsrruzzg.supabase.co";
 
-
 const SUPABASE_KEY =
 "sb_publishable_Z7BmFlVoVQu3wCjquLsOHQ_joQwJoaT";
 
@@ -460,60 +457,81 @@ document.getElementById("leaderboard");
 function headers(){
 
   return {
-    "apikey": SUPABASE_KEY,
-    "Authorization": "Bearer " + SUPABASE_KEY
+    "apikey":
+      SUPABASE_KEY,
+
+    "Authorization":
+      "Bearer " +
+      SUPABASE_KEY
   };
 
 }
 
 
 /* =====================================
-   SHOW ROUND COUNT
+   LOAD PLAYER
 ===================================== */
 
-function showRounds(){
+async function loadPlayer(){
 
-  roundsBox.textContent =
-    Math.min(roundsToday,100) +
-    " / 100";
+  const response =
+    await fetch(
+
+      SUPABASE_URL +
+      "/rest/v1/players" +
+      "?username=eq." +
+      encodeURIComponent(username) +
+      "&select=points",
+
+      {
+        headers:
+          headers()
+      }
+
+    );
 
 
-  if(roundsToday >= 100){
+  if(!response.ok){
 
-    startButton.disabled = true;
-
-    startButton.textContent =
-      "LIMIT REACHED";
-
-  }else{
-
-    startButton.disabled = false;
-
-    if(!playing){
-
-      startButton.textContent =
-        "PLAY AGAIN";
-
-    }
+    throw new Error(
+      await response.text()
+    );
 
   }
+
+
+  const data =
+    await response.json();
+
+
+  if(!data.length){
+
+    throw new Error(
+      "Player not found"
+    );
+
+  }
+
+
+  points =
+    Number(
+      data[0].points || 0
+    );
+
+
+  pointsBox.textContent =
+    points.toLocaleString();
 
 }
 
 
 /* =====================================
    LOAD ROUNDS
-   RPC FIRST
 ===================================== */
 
 async function loadRounds(){
 
   try{
-
-    /*
-      Cách 1:
-      gọi RPC đã test thành công
-    */
 
     const response =
       await fetch(
@@ -522,178 +540,102 @@ async function loadRounds(){
         "/rest/v1/rpc/get_rounds_today",
 
         {
+
           method:"POST",
 
           headers:{
             ...headers(),
+
             "Content-Type":
               "application/json"
           },
 
           body:
             JSON.stringify({
+
               p_username:
                 username
+
             })
+
         }
 
       );
 
 
-    if(response.ok){
-
-      const value =
-        await response.json();
-
-
-      const count =
-        Number(value);
-
-
-      if(Number.isFinite(count)){
-
-        roundsToday =
-          count;
-
-        showRounds();
-
-        console.log(
-          "Rounds from RPC:",
-          roundsToday
-        );
-
-        return;
-
-      }
-
-    }
-
-
-    /*
-      Cách 2:
-      fallback đọc trực tiếp game_rounds
-    */
-
-    console.log(
-      "RPC failed, using fallback"
-    );
-
-
-    const fallback =
-      await fetch(
-
-        SUPABASE_URL +
-        "/rest/v1/game_rounds" +
-        "?username=eq." +
-        encodeURIComponent(username) +
-        "&select=id,created_at" +
-        "&order=created_at.desc",
-
-        {
-          headers:
-            headers()
-        }
-
-      );
-
-
-    if(!fallback.ok){
+    if(!response.ok){
 
       throw new Error(
-        await fallback.text()
+        await response.text()
       );
 
     }
 
 
-    const rows =
-      await fallback.json();
+    const count =
+      Number(
+        await response.json()
+      );
 
 
-    /*
-      Lấy ngày Việt Nam
-    */
+    if(Number.isFinite(count)){
 
-    const now =
-      new Date();
+      roundsToday =
+        count;
 
-
-    const today =
-      new Intl.DateTimeFormat(
-        "en-CA",
-        {
-          timeZone:
-            "Asia/Ho_Chi_Minh",
-
-          year:
-            "numeric",
-
-          month:
-            "2-digit",
-
-          day:
-            "2-digit"
-        }
-      ).format(now);
-
-
-    roundsToday =
-      rows.filter(
-
-        row => {
-
-          const date =
-            new Intl.DateTimeFormat(
-              "en-CA",
-              {
-                timeZone:
-                  "Asia/Ho_Chi_Minh",
-
-                year:
-                  "numeric",
-
-                month:
-                  "2-digit",
-
-                day:
-                  "2-digit"
-              }
-            ).format(
-              new Date(
-                row.created_at
-              )
-            );
-
-
-          return date === today;
-
-        }
-
-      ).length;
+    }
 
 
     showRounds();
-
-
-    console.log(
-      "Rounds from fallback:",
-      roundsToday
-    );
 
 
   }catch(error){
 
     console.error(
-      "ROUND LOAD ERROR:",
+      "ROUND ERROR:",
       error
     );
 
-    /*
-      Không reset roundsToday về 0.
-      Giữ số hiện tại.
-    */
-
     showRounds();
+
+  }
+
+}
+
+
+/* =====================================
+   SHOW ROUNDS
+===================================== */
+
+function showRounds(){
+
+  roundsBox.textContent =
+    Math.min(
+      roundsToday,
+      100
+    ) +
+    " / 100";
+
+
+  if(roundsToday >= 100){
+
+    startButton.disabled =
+      true;
+
+    startButton.textContent =
+      "LIMIT REACHED";
+
+  }else{
+
+    startButton.disabled =
+      false;
+
+    if(!playing){
+
+      startButton.textContent =
+        "PLAY AGAIN";
+
+    }
 
   }
 
@@ -767,23 +709,12 @@ async function login(){
       await response.json();
 
 
-    /*
-      PLAYER CŨ
-    */
-
     if(players.length){
 
       username =
         players[0].username;
 
-    }
-
-
-    /*
-      PLAYER MỚI
-    */
-
-    else{
+    }else{
 
       const create =
         await fetch(
@@ -840,10 +771,10 @@ async function login(){
 
     await loadPlayer();
 
+    await loadRounds();
 
-    /*
-      Hiện game
-    */
+    await loadLeaderboard();
+
 
     loginScreen.classList.add(
       "hidden"
@@ -856,16 +787,6 @@ async function login(){
 
     message.textContent =
       "Connected ✅";
-
-
-    /*
-      Lấy số round thật
-    */
-
-    await loadRounds();
-
-
-    await loadLeaderboard();
 
 
   }catch(error){
@@ -894,58 +815,164 @@ async function login(){
 
 
 /* =====================================
-   LOAD PLAYER
+   START ROUND
+   SERVER FIRST
 ===================================== */
 
-async function loadPlayer(){
+startButton.onclick =
+startRound;
 
-  const response =
-    await fetch(
 
-      SUPABASE_URL +
-      "/rest/v1/players" +
-      "?username=eq." +
-      encodeURIComponent(username) +
-      "&select=points",
+async function startRound(){
 
-      {
-        headers:
-          headers()
-      }
+  if(playing)
+    return;
 
+
+  if(roundsToday >= 100)
+    return;
+
+
+  /*
+    Khóa nút ngay lập tức
+    tránh double click
+  */
+
+  startButton.disabled =
+    true;
+
+  startButton.textContent =
+    "STARTING...";
+
+
+  try{
+
+    /*
+      QUAN TRỌNG:
+
+      Server ghi started_at
+      trước khi timer chạy.
+    */
+
+    const response =
+      await fetch(
+
+        SUPABASE_URL +
+        "/rest/v1/rpc/start_game_round",
+
+        {
+
+          method:"POST",
+
+          headers:{
+            ...headers(),
+
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+
+              p_username:
+                username
+
+            })
+
+        }
+
+      );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        await response.text()
+      );
+
+    }
+
+
+    /*
+      Server đã xác nhận START
+    */
+
+    playing =
+      true;
+
+    taps =
+      0;
+
+    seconds =
+      15;
+
+
+    roundScoreBox.textContent =
+      "0";
+
+    timerBox.textContent =
+      "15";
+
+
+    startButton.style.display =
+      "none";
+
+
+    target.style.display =
+      "block";
+
+
+    message.textContent =
+      "⚡ TAP!";
+
+
+    moveTarget();
+
+
+    timer =
+      setInterval(
+
+        function(){
+
+          seconds--;
+
+          timerBox.textContent =
+            seconds;
+
+
+          if(seconds <= 0){
+
+            finishRound();
+
+          }
+
+        },
+
+        1000
+
+      );
+
+
+  }catch(error){
+
+    console.error(
+      "START ERROR:",
+      error
     );
 
 
-  if(!response.ok){
+    startButton.disabled =
+      false;
 
-    throw new Error(
-      await response.text()
-    );
+    startButton.textContent =
+      "START";
+
+
+    message.textContent =
+      "❌ " +
+      error.message;
 
   }
-
-
-  const data =
-    await response.json();
-
-
-  if(!data.length){
-
-    throw new Error(
-      "Player not found"
-    );
-
-  }
-
-
-  points =
-    Number(
-      data[0].points || 0
-    );
-
-
-  pointsBox.textContent =
-    points.toLocaleString();
 
 }
 
@@ -956,7 +983,9 @@ async function loadPlayer(){
 
 function moveTarget(){
 
-  const size = 72;
+  const size =
+    72;
+
 
   const maxX =
     Math.max(
@@ -964,6 +993,7 @@ function moveTarget(){
       game.clientWidth -
       size
     );
+
 
   const maxY =
     Math.max(
@@ -978,85 +1008,11 @@ function moveTarget(){
     maxX +
     "px";
 
+
   target.style.top =
     Math.random() *
     maxY +
     "px";
-
-}
-
-
-/* =====================================
-   START ROUND
-===================================== */
-
-startButton.onclick =
-startRound;
-
-
-function startRound(){
-
-  if(playing)
-    return;
-
-
-  if(roundsToday >= 100)
-    return;
-
-
-  playing =
-    true;
-
-  taps =
-    0;
-
-  seconds =
-    15;
-
-
-  roundScoreBox.textContent =
-    "0";
-
-  timerBox.textContent =
-    "15";
-
-
-  startButton.style.display =
-    "none";
-
-  target.style.display =
-    "block";
-
-
-  message.textContent =
-    "⚡ TAP!";
-
-
-  moveTarget();
-
-
-  timer =
-    setInterval(
-
-      function(){
-
-        seconds--;
-
-        timerBox.textContent =
-          seconds;
-
-
-        if(seconds <= 0){
-
-          finishRound();
-
-        }
-
-      },
-
-      1000
-
-    );
 
 }
 
@@ -1098,24 +1054,40 @@ async function finishRound(){
     false;
 
 
-  clearInterval(timer);
+  clearInterval(
+    timer
+  );
 
 
   target.style.display =
     "none";
 
+
   startButton.style.display =
     "block";
 
+
+  startButton.disabled =
+    true;
+
+
   startButton.textContent =
-    "PLAY AGAIN";
+    "SAVING...";
 
 
   message.textContent =
-    "Đang tính điểm...";
+    "Đang kiểm tra round...";
 
 
   try{
+
+    /*
+      Server kiểm tra:
+      - Có round đang active?
+      - Đã đủ 15 giây?
+      - Chưa quá 100 round?
+      - taps hợp lệ?
+    */
 
     const response =
       await fetch(
@@ -1166,7 +1138,7 @@ async function finishRound(){
 
 
     /*
-      Cộng POINT
+      Cộng POINT trên giao diện
     */
 
     points +=
@@ -1182,13 +1154,10 @@ async function finishRound(){
 
 
     /*
-      QUAN TRỌNG:
-      Round vừa được ghi thành công.
-      Tăng counter ngay.
+      Round mới
     */
 
     roundsToday++;
-
 
     showRounds();
 
@@ -1200,11 +1169,10 @@ async function finishRound(){
 
 
     /*
-      Đồng bộ lại từ database
+      Đồng bộ lại từ DB
     */
 
     await loadRounds();
-
 
     await loadLeaderboard();
 
@@ -1217,9 +1185,21 @@ async function finishRound(){
     );
 
 
+    /*
+      Nếu server từ chối round,
+      không tăng round count.
+    */
+
     message.textContent =
       "❌ " +
       error.message;
+
+
+    startButton.disabled =
+      false;
+
+    startButton.textContent =
+      "START";
 
   }
 
@@ -1270,9 +1250,9 @@ async function claimBonus(){
 
             })
 
-          }
+        }
 
-        );
+      );
 
 
     if(!response.ok){
@@ -1313,10 +1293,6 @@ async function claimBonus(){
 
       bonusButton.textContent =
         "ALREADY CLAIMED";
-
-
-      message.textContent =
-        "Đã nhận Daily Bonus hôm nay.";
 
     }
 
@@ -1402,7 +1378,8 @@ async function loadLeaderboard(){
 
           const name =
             String(
-              player.username || ""
+              player.username ||
+              ""
             ).replace(
               /[&<>"']/g,
               ""
@@ -1411,7 +1388,8 @@ async function loadLeaderboard(){
 
           const value =
             Number(
-              player.points || 0
+              player.points ||
+              0
             );
 
 
